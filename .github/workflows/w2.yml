@@ -1,9 +1,9 @@
-name: Quark签到
-
+name: Couu
 on:
+  workflow_dispatch:
   schedule:
-   - cron: '34 1,16 * * *'
-  workflow_dispatch:      # 允许手动触发
+   - cron: '12 3,10 * * *' # run timezone: timezone: timezone: timezone: timezone: 
+   
 permissions:
   contents: write
 

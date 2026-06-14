@@ -1,11 +1,15 @@
-name: Couu
+name: Qu
+
 on:
   workflow_dispatch:
   schedule:
-   - cron: '12 3,10 * * *' # run timezone: timezone: timezone: timezone: timezone: 
-   
+    - cron: '33 4,10 * * *'   # 北京时间 09:00 (UTC+8 -> UTC+1)
+
 permissions:
   contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # 强制所有 JS actions 使用 Node.js 24
 
 jobs:
   check-if-already-signed:
@@ -14,11 +18,11 @@ jobs:
       skip: ${{ steps.check.outputs.skip }}
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4   # ← 已升级 Node24
 
       - name: 恢复签到成功记录缓存
         id: cache-success-restore
-        uses: actions/cache@v4
+        uses: actions/cache@v4      # ← 已支持 Node24
         with:
           path: .last_success_date
           key: last-success-marker
@@ -48,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4   # ← 已升级 Node24
 
       - name: 随机延迟（早上）
         if: github.event.schedule == '0 1 * * *'
@@ -65,7 +69,7 @@ jobs:
           sleep $delay
 
       - name: 设置Python环境
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5   # ← 已升级 Node24
         with:
           python-version: '3.x'
 
@@ -91,16 +95,7 @@ jobs:
           path: .last_success_date
           key: last-success-marker
 
-      - name: 清理旧的工作流记录
-        uses: Mattraks/delete-workflow-runs@main
-        if: always()
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 0
-          keep_minimum_runs: 60
-
-# ─────────────── 自动 commit 当前日期保活 ───────────────
+      # ─────────────── 自动 commit 当前日期保活 ───────────────
       - name: Create keep-alive commit
         run: |
           echo "# Keep-alive commit" >> keepalive.md 2>/dev/null || true
@@ -111,7 +106,7 @@ jobs:
           git add keepalive.md || true
 
       - name: Commit & Push if changed
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v5   # ← 仍是最新版本，作者未更新 Node24
         with:
           commit_message: "chore: keep-alive commit - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           file_pattern: keepalive.md

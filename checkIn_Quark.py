@@ -4,6 +4,24 @@ import sys
 import requests 
 
 cookie_list = os.getenv("COOKIE_QUARK").split('\n|&&')
+headers = {
+    "Host": "drive-m.quark.cn",
+    "Connection": "keep-alive",
+    "sec-ch-ua-platform": "\"Android\"",
+    "User-Agent": "Mozilla/5.0 (Linux; U; Android 16; zh-CN; V2231A Build/BP2A.250605.031.A3) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/144.0.7559.86 "
+                  "Quark/10.11.5.1090 Mobile Safari/537.36",
+    "sec-ch-ua": "\"Not(A:Brand\";v=\"8\", \"Chromium\";v=\"144\", \"Android WebView\";v=\"144\"",
+    "sec-ch-ua-mobile": "?1",
+    "Accept": "*/*",
+    "Origin": "https://b.quark.cn",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
+    "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Referer": "https://b.quark.cn/",
+    "Accept-Encoding": "gzip, deflate, br"
+}
 
 # 替代 notify 功能
 def send(title, message):
@@ -63,7 +81,8 @@ class Quark:
             "sign": self.param.get('sign'),
             "vcode": self.param.get('vcode')
         }
-        response = requests.get(url=url, params=querystring).json()
+        response = requests.get(url=url, params=querystring, headers=headers).json()
+
         #print(response)
         if response.get("data"):
             return response["data"]
@@ -84,7 +103,8 @@ class Quark:
             "vcode": self.param.get('vcode')
         }
         data = {"sign_cyclic": True}
-        response = requests.post(url=url, json=data, params=querystring).json()
+        response = requests.post(url=url, json=data, params=querystring, headers=headers).json()
+
         #print(response)
         if response.get("data"):
             return True, response["data"]["sign_daily_reward"]
